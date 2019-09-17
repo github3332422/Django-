@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>jQuery table td可编辑</title>
+    <style type="text/css">
+        /*
+         * page css
+         */
+        a,body,center,code,dd,div,dl,dt,em,fieldset,form,h1,h2,h3,h4,h5,h6,html,i,img,label,li,ol,p,pre,small,span,strong,sub,sup,u,ul {
+            margin: auto;
+            padding: 0;
+            border: 0;
+            outline: 0;
+            font-size: 100%;
+            vertical-align: baseline;
+            background: 0 0
+        }
+
+        h2 {
+            text-align: center;
+            padding: 10px;
+            font-size: 20px
+        }
+
+        a {
+            color: #007bc4;
+            text-decoration: none
+        }
+
+        a:hover {
+            text-decoration: underline
+        }
+
+        ol,ul {
+            list-style: none
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0
+        }
+
+        body {
+            height: 100%;
+            font: 12px;
+            color: #51555C;
+            background: #2C2C2C
+        }
+
+        img {
+            border: none
+        }
+
+        .logo {
+            width: 910px
+        }
+
+        #main_demo {
+            width: 910px;
+            min-height: 600px;
+            margin: 30px auto 0 auto;
+            background: #fff;
+            -moz-border-radius: 12px;
+            -khtml-border-radius: 12px;
+            -webkit-border-radius: 12px;
+            border-radius: 12px
+        }
+
+        .ad {
+            text-align: center;
+            margin-top: 25px
+        }
+
+        .clear {
+            clear: both
+        }
+
+        /*
+         * demo styles
+         */
+         table {
+            margin: 0 auto;
+            border-collapse: collapse
+        }
+
+        td,th {
+            width: 10%;
+            font-size: 14px;
+            padding: 10px 0;
+            text-align: center;
+            border: 1px solid #ddd
+        }
+
+        th {
+            background-color: #f4f4f4
+        }
+
+        /* 
+         * input
+         */
+         td.input {
+            position: relative
+        }
+
+        td input {
+            width: 100%;
+            border: 1px solid #CF5C74;
+            background: #F90;
+            border-radius: 4px;
+            display: block;
+            position: absolute;
+            text-align: center;
+            font-size: 14px;
+            left: 0;
+            top: 0;
+            padding: 11px 0;
+            margin: -1px 0 0 -1px
+        }
+
+        td.hover {
+            background: #eee
+        }
+    </style>
+</head>
+<body>
+    <div id="main_demo">
+        <h2>jQuery table td可编辑</h2>
+        <table border="0" cellpadding="0" cellspacing="0" width="500">
+            <tbody>
+                <tr>
+                    <th>td input演示</a></th>
+                    <th scope="col">列1</th>
+                    <th scope="col">第二列</th>
+                    <th scope="col">其他</th>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <th>1</th>
+                    <td class="content"></td>
+                    <td class="text"></td>
+                    <td class="position">0</td>
+                </tr>
+                <tr>
+                    <th>2</th>
+                    <td class="content"></td>
+                    <td class="text">0</td>
+                    <td class="position">0</td>
+                </tr>
+                <tr>
+                    <th>3</th>
+                    <td class="content"></td>
+                    <td class="text"></td>
+                    <td class="position hover">0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- JS文件：jQuery-百度CDN -->
+    <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $('table td').click(function() {
+                if (!$(this).is('.input')) {
+                    $(this).addClass('input').html('<input type="text" value="' + $(this).text() + '" />')
+                        .find('input')
+                            .focus()
+                            .blur(function() {
+                                $(this).parent().removeClass('input').html($(this).val() || 0);
+                            });
+                }
+            }).hover(function() {
+                $(this).addClass('hover');
+            }, function() {
+                $(this).removeClass('hover');
+            });
+        });
+    </script>
+</body>
+</html>

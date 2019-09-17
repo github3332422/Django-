@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商品列表</title>
+    <script type="text/javascript" src="/static/js/jquery-2.0.0.min.js"></script>
+</head>
+<body>
+<div>
+    <table border="1px">
+        <thead>
+            <tr>
+                <td>选择</td>
+                <td>编号</td>
+                <td>商品名称</td>
+                <td>商品数量</td>
+                <td>商品价格</td>
+                <td>商品类型</td>
+                <td>商品产地</td>
+                <td>编辑商品</td>
+            </tr>
+        </thead>
+        <tbody id="tb" class="tb">
+
+        </tbody>
+    </table>
+</div>
+<div>
+    <ul>
+        <li><span>商品名字:</span><input type="text" id="goods_name"></li>
+        <li><span>商品数量:</span><input type="text" id="goods_count"></li>
+        <li><span>商品价格:</span><input type="text" id="goods_price"></li>
+        <li><span>商品类型:</span><input type="text" id="goods_type"></li>
+        <li><span>商品产地:</span><input type="text" id="goods_birth"></li>
+    </ul>
+    <button id="btn">增加商品</button>
+    <button id="btn_dels">批量删除</button>
+    <input type="text" value="hahaha"/>
+</div>
+</body>
+<script>
+    $(document).ready(function () {
+        //查询操作
+        $.ajax({
+            url:'/shop/shop_goods/',
+            type:'get',
+            async:true,{#是否异步#}
+            data:{
+                {#'goods_type' : '膨化食品',#}
+            },
+            success:function (res) {
+                console.log(res);
+                for (var i = 0 ; i < res.data.length ; i ++){
+                    var htmlString = '<tr><td><input type="checkbox" class="mycheck">'+
+                                     '</td><td>' + (i+1)+
+                                     '</td><td>'+res.data[i].goods_name+
+                                     '</td><td>'+res.data[i].goods_count+
+                                     '</td><td>' +res.data[i].goods_price+
+                                     '</td><td>'+res.data[i].goods_type+
+                                     '</td><td>'+res.data[i].goods_birth+
+                                     '</td><td><button class="btn-del">删除商品</button></td></tr>';
+                    $('.tb').append(htmlString);
+                }
+                btnDel();
+                check_box();
+                do_tds();
+            }
+        });
+        //添加操作
+        $("#btn").click(function () {
+            var goods_name = $("#goods_name").val();
+            var goods_count = $("#goods_count").val();
+            var goods_price = $("#goods_price").val();
+            var goods_type = $("#goods_type").val();
+            var goods_birth = $("#goods_birth").val();
+            $.ajax({
+                url:'/shop/shop_goods/',
+                type:'post',
+                async:true,{#是否异步#}
+                data:{
+                    'goods_name':goods_name,
+                    'goods_count':goods_count,
+                    'goods_price':goods_price,
+                    'goods_type':goods_type,
+                    'goods_birth':goods_birth,
+                },
+                success:function (res) {
+                    console.log(res);
+                    window.location.reload();
+                }
+            });
+        });
+
+        //删除操作
+        function btnDel(){
+            $(".btn-del").click(function () {
+                {#var result =$(this).parent().parent().parent().find("td:eq(1)").text();#}
+                var goods_name =$(this).parent().parent().find("td:eq(2)").text();
+                console.log("哈哈哈" + goods_name);
+                $.ajax({
+                    url:'/shop/shop_goods/',
+                    type:'delete',
+                    async:true,{#是否异步#}
+                    data:{
+                        'goods_name': goods_name,
+                    },
+                    success:function (res) {
+                        console.log(res);
+                        //重新加载，全局刷新
+                        window.location.reload();
+                    }
+                });
+            });
+        }
+        //选住多个一起删除
+        function check_box(){
+            $("#btn_dels").click(function () {
+                var result = $(".mycheck:checked").parent().parent().find("td:eq(2)");
+                var arr1 = new Array();
+                $.each(result,function (i,item) {
+                    arr1.push($(item).text());//把HTML页面转化为Jquery对象
+                })
+                console.log(arr1.length);
+                $.ajax({
+                    url:'/shop/shop_goods/',
+                    type:'delete',
+                    async:true,{#是否异步#}
+                    data:{
+                        'goods_name': JSON.stringify(arr1),
+                        'isSingle':arr1.length.toString(),
+                    },
+                    success:function (res) {
+                        console.log(res);
+                        //重新加载
+                        window.location.reload();
+                    }
+                });
+            })
+        }
+        // //修改操作
+        function do_tds() {
+            $("tbody td").click(function () {
+                var objVal = $(this);
+                var oldValText = objVal.text();
+                var input = $("<input type='text' value= " + oldValText +">");
+                objVal.html(input);
+                //组组织它一直点
+                input.click(function () {
+                    return false;
+                });
+                input.css("font-size","16px");
+                input.css("back-ground","green");
+                input.width("60px");
+                input.blur(function () { //当失去焦点的时候触发事件
+                   var nweValTexft = $(this).val(); //获取新值
+                   objVal.html(nweValTexft);
+                   var goods_name = objVal.parent().find("td:eq(2)").text();
+                   var goods_count = objVal.parent().find("td:eq(3)").text();
+                   var goods_price = objVal.parent().find("td:eq(4)").text();
+                   var goods_type = objVal.parent().find("td:eq(5)").text();
+                   var goods_birth = objVal.parent().find("td:eq(6)").text();
+                   $.ajax({
+                        url:'/shop/shop_goods/',
+                        type:'put',
+                        async:true,{#是否异步#}
+                        data:{
+                            'goods_name':goods_name,
+                            'goods_count':goods_count,
+                            'goods_price':goods_price,
+                            'goods_type':goods_type,
+                            'goods_birth':goods_birth,
+                        },
+                        success:function (res) {
+                            console.log(res);
+                            {#window.location.reload();#}
+                        }
+                    });
+                });
+            })
+        }
+    });
+</script>
+</html>
